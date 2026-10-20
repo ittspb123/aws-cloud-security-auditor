@@ -1,0 +1,3 @@
+-r requirements.txt
+moto[s3,ec2,iam,cloudtrail,s3control,sts]>=5.0
+pytest>=8

@@ -1,0 +1,95 @@
+{
+  "planted": 24,
+  "detected": 24,
+  "missed": [],
+  "unexpected": [],
+  "recall": 1.0,
+  "precision": 1.0,
+  "per_check": {
+    "CT_LOG_VALIDATION_DISABLED": {
+      "planted": 1,
+      "detected": 1
+    },
+    "CT_NOT_ENABLED": {
+      "planted": 1,
+      "detected": 1
+    },
+    "EC2_DEFAULT_SG_IN_USE": {
+      "planted": 1,
+      "detected": 1
+    },
+    "EC2_EBS_DEFAULT_ENCRYPTION_OFF": {
+      "planted": 1,
+      "detected": 1
+    },
+    "EC2_EBS_UNENCRYPTED": {
+      "planted": 1,
+      "detected": 1
+    },
+    "EC2_OPEN_RDP": {
+      "planted": 2,
+      "detected": 2
+    },
+    "EC2_OPEN_SSH": {
+      "planted": 3,
+      "detected": 3
+    },
+    "IAM_ROOT_NO_MFA": {
+      "planted": 1,
+      "detected": 1
+    },
+    "IAM_STALE_ACCESS_KEY": {
+      "planted": 1,
+      "detected": 1
+    },
+    "IAM_USER_DIRECT_POLICY": {
+      "planted": 1,
+      "detected": 1
+    },
+    "IAM_USER_NO_MFA": {
+      "planted": 1,
+      "detected": 1
+    },
+    "IAM_WEAK_PASSWORD_POLICY": {
+      "planted": 1,
+      "detected": 1
+    },
+    "IAM_WILDCARD_ADMIN_POLICY": {
+      "planted": 1,
+      "detected": 1
+    },
+    "S3_ACCOUNT_BPA_DISABLED": {
+      "planted": 1,
+      "detected": 1
+    },
+    "S3_BUCKET_BPA_DISABLED": {
+      "planted": 2,
+      "detected": 2
+    },
+    "S3_NO_DEFAULT_ENCRYPTION": {
+      "planted": 1,
+      "detected": 1
+    },
+    "S3_NO_VERSIONING": {
+      "planted": 1,
+      "detected": 1
+    },
+    "S3_PUBLIC_ACL": {
+      "planted": 1,
+      "detected": 1
+    },
+    "S3_PUBLIC_POLICY": {
+      "planted": 1,
+      "detected": 1
+    },
+    "S3_SSL_NOT_ENFORCED": {
+      "planted": 1,
+      "detected": 1
+    }
+  },
+  "mode": "moto",
+  "scan_seconds": 0.401,
+  "checks_run": 21,
+  "checks_failed": 0,
+  "errors": []
+}

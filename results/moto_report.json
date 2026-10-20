@@ -1,0 +1,430 @@
+{
+  "tool": "cloudaudit",
+  "version": "0.1.0",
+  "generated_at": "2026-10-20T01:15:29+00:00",
+  "account_id": "123456789012",
+  "regions": [
+    "us-east-1"
+  ],
+  "summary": {
+    "checks_run": 21,
+    "checks_failed": 0,
+    "findings": 24,
+    "by_severity": {
+      "CRITICAL": 3,
+      "HIGH": 11,
+      "MEDIUM": 8,
+      "LOW": 2
+    },
+    "duration_seconds": 0.399
+  },
+  "findings": [
+    {
+      "check_id": "IAM_ROOT_NO_MFA",
+      "title": "Root account does not have MFA enabled",
+      "severity": "CRITICAL",
+      "cis_ref": "1.5",
+      "service": "iam",
+      "resource": "root",
+      "region": "global",
+      "detail": "AccountMFAEnabled is 0",
+      "remediation": "Sign in as root -> Security credentials -> Assign MFA device (hardware key preferred).",
+      "evidence": {}
+    },
+    {
+      "check_id": "S3_PUBLIC_ACL",
+      "title": "S3 bucket ACL grants access to everyone",
+      "severity": "CRITICAL",
+      "cis_ref": "2.1.4",
+      "service": "s3",
+      "resource": "cloudaudit-seed-public-acl-eval",
+      "region": "us-east-1",
+      "detail": "ACL grants AllUsers:READ",
+      "remediation": "aws s3api put-bucket-acl --bucket cloudaudit-seed-public-acl-eval --acl private && aws s3api put-bucket-ownership-controls --bucket cloudaudit-seed-public-acl-eval --ownership-controls Rules=[{ObjectOwnership=BucketOwnerEnforced}]",
+      "evidence": {
+        "grants": [
+          [
+            "AllUsers",
+            "READ"
+          ]
+        ]
+      }
+    },
+    {
+      "check_id": "S3_PUBLIC_POLICY",
+      "title": "S3 bucket policy allows anonymous access",
+      "severity": "CRITICAL",
+      "cis_ref": "2.1.4",
+      "service": "s3",
+      "resource": "cloudaudit-seed-public-policy-eval",
+      "region": "us-east-1",
+      "detail": "Statement allows s3:GetObject to Principal *",
+      "remediation": "Remove statements with Principal \"*\" (or add restrictive conditions): aws s3api delete-bucket-policy --bucket cloudaudit-seed-public-policy-eval, then enable Block Public Access.",
+      "evidence": {
+        "statement": {
+          "Sid": "PublicRead",
+          "Effect": "Allow",
+          "Principal": "*",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::cloudaudit-seed-public-policy-eval/*"
+        }
+      }
+    },
+    {
+      "check_id": "CT_NOT_ENABLED",
+      "title": "No multi-region CloudTrail trail is logging",
+      "severity": "HIGH",
+      "cis_ref": "3.1",
+      "service": "cloudtrail",
+      "resource": "123456789012",
+      "region": "global",
+      "detail": "1 trail(s) found, none both multi-region and logging",
+      "remediation": "aws cloudtrail create-trail --name org-trail --s3-bucket-name <log-bucket> --is-multi-region-trail --enable-log-file-validation && aws cloudtrail start-logging --name org-trail",
+      "evidence": {
+        "trails": [
+          "cloudaudit-seed-trail-eval"
+        ]
+      }
+    },
+    {
+      "check_id": "EC2_OPEN_RDP",
+      "title": "Security group allows RDP (3389) from the internet",
+      "severity": "HIGH",
+      "cis_ref": "5.2 / 5.3",
+      "service": "ec2",
+      "resource": "sg-19ff7e068dc36fae2",
+      "region": "us-east-1",
+      "detail": "cloudaudit-seed-all-traffic-eval allows port 3389 from 0.0.0.0/0",
+      "remediation": "Revoke the 0.0.0.0/0 and ::/0 ingress rule on sg-19ff7e068dc36fae2 (us-east-1) with aws ec2 revoke-security-group-ingress; use SSM Session Manager or a bastion/VPN CIDR instead.",
+      "evidence": {
+        "vpc_id": "vpc-b1bf36e7fe391c327",
+        "sources": [
+          "0.0.0.0/0"
+        ]
+      }
+    },
+    {
+      "check_id": "EC2_OPEN_RDP",
+      "title": "Security group allows RDP (3389) from the internet",
+      "severity": "HIGH",
+      "cis_ref": "5.2 / 5.3",
+      "service": "ec2",
+      "resource": "sg-6db2c01b17cadfed9",
+      "region": "us-east-1",
+      "detail": "cloudaudit-seed-open-rdp-eval allows port 3389 from 0.0.0.0/0",
+      "remediation": "Revoke the 0.0.0.0/0 and ::/0 ingress rule on sg-6db2c01b17cadfed9 (us-east-1) with aws ec2 revoke-security-group-ingress; use SSM Session Manager or a bastion/VPN CIDR instead.",
+      "evidence": {
+        "vpc_id": "vpc-b1bf36e7fe391c327",
+        "sources": [
+          "0.0.0.0/0"
+        ]
+      }
+    },
+    {
+      "check_id": "EC2_OPEN_SSH",
+      "title": "Security group allows SSH (22) from the internet",
+      "severity": "HIGH",
+      "cis_ref": "5.2 / 5.3",
+      "service": "ec2",
+      "resource": "sg-01bf673699cc95e7d",
+      "region": "us-east-1",
+      "detail": "cloudaudit-seed-open-ssh-eval allows port 22 from 0.0.0.0/0",
+      "remediation": "Revoke the 0.0.0.0/0 and ::/0 ingress rule on sg-01bf673699cc95e7d (us-east-1) with aws ec2 revoke-security-group-ingress; use SSM Session Manager or a bastion/VPN CIDR instead.",
+      "evidence": {
+        "vpc_id": "vpc-b1bf36e7fe391c327",
+        "sources": [
+          "0.0.0.0/0"
+        ]
+      }
+    },
+    {
+      "check_id": "EC2_OPEN_SSH",
+      "title": "Security group allows SSH (22) from the internet",
+      "severity": "HIGH",
+      "cis_ref": "5.2 / 5.3",
+      "service": "ec2",
+      "resource": "sg-19ff7e068dc36fae2",
+      "region": "us-east-1",
+      "detail": "cloudaudit-seed-all-traffic-eval allows port 22 from 0.0.0.0/0",
+      "remediation": "Revoke the 0.0.0.0/0 and ::/0 ingress rule on sg-19ff7e068dc36fae2 (us-east-1) with aws ec2 revoke-security-group-ingress; use SSM Session Manager or a bastion/VPN CIDR instead.",
+      "evidence": {
+        "vpc_id": "vpc-b1bf36e7fe391c327",
+        "sources": [
+          "0.0.0.0/0"
+        ]
+      }
+    },
+    {
+      "check_id": "EC2_OPEN_SSH",
+      "title": "Security group allows SSH (22) from the internet",
+      "severity": "HIGH",
+      "cis_ref": "5.2 / 5.3",
+      "service": "ec2",
+      "resource": "sg-fd491a22ee3e17c2d",
+      "region": "us-east-1",
+      "detail": "cloudaudit-seed-open-ssh-v6-eval allows port 22 from ::/0",
+      "remediation": "Revoke the 0.0.0.0/0 and ::/0 ingress rule on sg-fd491a22ee3e17c2d (us-east-1) with aws ec2 revoke-security-group-ingress; use SSM Session Manager or a bastion/VPN CIDR instead.",
+      "evidence": {
+        "vpc_id": "vpc-b1bf36e7fe391c327",
+        "sources": [
+          "::/0"
+        ]
+      }
+    },
+    {
+      "check_id": "IAM_USER_NO_MFA",
+      "title": "IAM user with console password has no MFA",
+      "severity": "HIGH",
+      "cis_ref": "1.10",
+      "service": "iam",
+      "resource": "cloudaudit-seed-nomfa-eval",
+      "region": "global",
+      "detail": "Console password set but no MFA device",
+      "remediation": "Enable MFA for cloudaudit-seed-nomfa-eval (aws iam enable-mfa-device) and enforce it with a policy denying actions when aws:MultiFactorAuthPresent is false.",
+      "evidence": {
+        "arn": "arn:aws:iam::123456789012:user/cloudaudit-seed-nomfa-eval"
+      }
+    },
+    {
+      "check_id": "IAM_WILDCARD_ADMIN_POLICY",
+      "title": "Customer-managed policy grants full '*:*' administrative privileges",
+      "severity": "HIGH",
+      "cis_ref": "1.16",
+      "service": "iam",
+      "resource": "cloudaudit-seed-star-admin-eval",
+      "region": "global",
+      "detail": "Allows Action '*' on Resource '*' (attached 1 time(s))",
+      "remediation": "Detach cloudaudit-seed-star-admin-eval from all principals and replace it with least-privilege policies (use IAM Access Analyzer policy generation).",
+      "evidence": {
+        "arn": "arn:aws:iam::123456789012:policy/cloudaudit-seed-star-admin-eval"
+      }
+    },
+    {
+      "check_id": "S3_ACCOUNT_BPA_DISABLED",
+      "title": "Account-level S3 Block Public Access is not fully enabled",
+      "severity": "HIGH",
+      "cis_ref": "2.1.4",
+      "service": "s3",
+      "resource": "123456789012",
+      "region": "global",
+      "detail": "Disabled settings: BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, RestrictPublicBuckets",
+      "remediation": "aws s3control put-public-access-block --account-id 123456789012 --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true",
+      "evidence": {
+        "disabled": [
+          "BlockPublicAcls",
+          "IgnorePublicAcls",
+          "BlockPublicPolicy",
+          "RestrictPublicBuckets"
+        ]
+      }
+    },
+    {
+      "check_id": "S3_BUCKET_BPA_DISABLED",
+      "title": "S3 bucket Block Public Access is not fully enabled",
+      "severity": "HIGH",
+      "cis_ref": "2.1.4",
+      "service": "s3",
+      "resource": "cloudaudit-seed-public-acl-eval",
+      "region": "us-east-1",
+      "detail": "Disabled settings: BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, RestrictPublicBuckets",
+      "remediation": "aws s3api put-public-access-block --bucket cloudaudit-seed-public-acl-eval --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true",
+      "evidence": {
+        "disabled": [
+          "BlockPublicAcls",
+          "IgnorePublicAcls",
+          "BlockPublicPolicy",
+          "RestrictPublicBuckets"
+        ]
+      }
+    },
+    {
+      "check_id": "S3_BUCKET_BPA_DISABLED",
+      "title": "S3 bucket Block Public Access is not fully enabled",
+      "severity": "HIGH",
+      "cis_ref": "2.1.4",
+      "service": "s3",
+      "resource": "cloudaudit-seed-public-policy-eval",
+      "region": "us-east-1",
+      "detail": "Disabled settings: BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, RestrictPublicBuckets",
+      "remediation": "aws s3api put-public-access-block --bucket cloudaudit-seed-public-policy-eval --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true",
+      "evidence": {
+        "disabled": [
+          "BlockPublicAcls",
+          "IgnorePublicAcls",
+          "BlockPublicPolicy",
+          "RestrictPublicBuckets"
+        ]
+      }
+    },
+    {
+      "check_id": "CT_LOG_VALIDATION_DISABLED",
+      "title": "CloudTrail log file validation is disabled",
+      "severity": "MEDIUM",
+      "cis_ref": "3.2",
+      "service": "cloudtrail",
+      "resource": "cloudaudit-seed-trail-eval",
+      "region": "us-east-1",
+      "detail": "Digest files are not produced",
+      "remediation": "aws cloudtrail update-trail --name cloudaudit-seed-trail-eval --enable-log-file-validation",
+      "evidence": {}
+    },
+    {
+      "check_id": "EC2_DEFAULT_SG_IN_USE",
+      "title": "Default security group is attached to resources",
+      "severity": "MEDIUM",
+      "cis_ref": "5.4",
+      "service": "ec2",
+      "resource": "sg-fd44246ea0e714497",
+      "region": "us-east-1",
+      "detail": "Default SG attached to 1 network interface(s)",
+      "remediation": "Move the network interfaces using sg-fd44246ea0e714497 to purpose-built security groups, then remove all inbound and outbound rules from the default group.",
+      "evidence": {
+        "network_interfaces": [
+          "eni-07820867256f70cee"
+        ]
+      }
+    },
+    {
+      "check_id": "EC2_EBS_DEFAULT_ENCRYPTION_OFF",
+      "title": "EBS encryption by default is disabled",
+      "severity": "MEDIUM",
+      "cis_ref": "2.2.1",
+      "service": "ec2",
+      "resource": "ebs-default-encryption/us-east-1",
+      "region": "us-east-1",
+      "detail": "New EBS volumes are not encrypted by default",
+      "remediation": "aws ec2 enable-ebs-encryption-by-default --region us-east-1",
+      "evidence": {}
+    },
+    {
+      "check_id": "EC2_EBS_UNENCRYPTED",
+      "title": "EBS volume is not encrypted",
+      "severity": "MEDIUM",
+      "cis_ref": "2.2.1",
+      "service": "ec2",
+      "resource": "vol-08dca923f687bd539",
+      "region": "us-east-1",
+      "detail": "1 GiB volume, attached to nothing",
+      "remediation": "Snapshot vol-08dca923f687bd539, copy the snapshot with --encrypted, create a new volume from it and swap it in; enable EBS encryption by default to prevent recurrence.",
+      "evidence": {
+        "attachments": []
+      }
+    },
+    {
+      "check_id": "IAM_STALE_ACCESS_KEY",
+      "title": "Active access key older than 90 days",
+      "severity": "MEDIUM",
+      "cis_ref": "1.14",
+      "service": "iam",
+      "resource": "cloudaudit-seed-stalekey-eval/AKIARZPUZDIKFBALWOWS",
+      "region": "global",
+      "detail": "Key is 120 days old",
+      "remediation": "Create a new key for the owner, update consumers, then aws iam update-access-key --status Inactive / delete-access-key for cloudaudit-seed-stalekey-eval/AKIARZPUZDIKFBALWOWS.",
+      "evidence": {
+        "age_days": 120
+      }
+    },
+    {
+      "check_id": "IAM_WEAK_PASSWORD_POLICY",
+      "title": "Account password policy is missing or weak",
+      "severity": "MEDIUM",
+      "cis_ref": "1.8 / 1.9",
+      "service": "iam",
+      "resource": "account-password-policy",
+      "region": "global",
+      "detail": "MinimumPasswordLength=8 (<14); PasswordReusePrevention=1 (<24)",
+      "remediation": "aws iam update-account-password-policy --minimum-password-length 14 --password-reuse-prevention 24 --require-symbols --require-numbers --require-uppercase-characters --require-lowercase-characters",
+      "evidence": {
+        "policy": {
+          "MinimumPasswordLength": 8,
+          "RequireSymbols": false,
+          "RequireNumbers": false,
+          "RequireUppercaseCharacters": false,
+          "RequireLowercaseCharacters": false,
+          "AllowUsersToChangePassword": false,
+          "ExpirePasswords": false,
+          "MaxPasswordAge": 0,
+          "PasswordReusePrevention": 1,
+          "HardExpiry": false
+        }
+      }
+    },
+    {
+      "check_id": "S3_NO_DEFAULT_ENCRYPTION",
+      "title": "S3 bucket has no default encryption configured",
+      "severity": "MEDIUM",
+      "cis_ref": "2.1.1 (v1.4)",
+      "service": "s3",
+      "resource": "cloudaudit-seed-no-encryption-eval",
+      "region": "us-east-1",
+      "detail": "No default server-side encryption",
+      "remediation": "aws s3api put-bucket-encryption --bucket cloudaudit-seed-no-encryption-eval --server-side-encryption-configuration '{\"Rules\":[{\"ApplyServerSideEncryptionByDefault\":{\"SSEAlgorithm\":\"aws:kms\"}}]}'",
+      "evidence": {}
+    },
+    {
+      "check_id": "S3_SSL_NOT_ENFORCED",
+      "title": "S3 bucket policy does not deny non-HTTPS requests",
+      "severity": "MEDIUM",
+      "cis_ref": "2.1.1 (v3.0) / 2.1.2 (v1.5)",
+      "service": "s3",
+      "resource": "cloudaudit-seed-no-tls-eval",
+      "region": "us-east-1",
+      "detail": "No Deny statement on aws:SecureTransport=false",
+      "remediation": "Add a Deny statement for all principals on arn:aws:s3:::cloudaudit-seed-no-tls-eval and arn:aws:s3:::cloudaudit-seed-no-tls-eval/* with Condition {\"Bool\":{\"aws:SecureTransport\":\"false\"}}.",
+      "evidence": {}
+    },
+    {
+      "check_id": "IAM_USER_DIRECT_POLICY",
+      "title": "IAM user has policies attached directly instead of via groups",
+      "severity": "LOW",
+      "cis_ref": "1.15",
+      "service": "iam",
+      "resource": "cloudaudit-seed-direct-eval",
+      "region": "global",
+      "detail": "attached=[] inline=['inline-s3-list']",
+      "remediation": "Move cloudaudit-seed-direct-eval's permissions to an IAM group (or role), add the user to it, then detach-user-policy / delete-user-policy.",
+      "evidence": {
+        "attached": [],
+        "inline": [
+          "inline-s3-list"
+        ]
+      }
+    },
+    {
+      "check_id": "S3_NO_VERSIONING",
+      "title": "S3 bucket versioning is not enabled",
+      "severity": "LOW",
+      "cis_ref": "2.1.3",
+      "service": "s3",
+      "resource": "cloudaudit-seed-no-versioning-eval",
+      "region": "us-east-1",
+      "detail": "Versioning status is Disabled",
+      "remediation": "aws s3api put-bucket-versioning --bucket cloudaudit-seed-no-versioning-eval --versioning-configuration Status=Enabled",
+      "evidence": {}
+    }
+  ],
+  "errors": [],
+  "check_timings": {
+    "CT_NOT_ENABLED": 0.013,
+    "CT_LOG_VALIDATION_DISABLED": 0.002,
+    "EC2_OPEN_SSH": 0.0293,
+    "EC2_OPEN_RDP": 0.0,
+    "EC2_DEFAULT_SG_IN_USE": 0.0059,
+    "EC2_EBS_UNENCRYPTED": 0.0057,
+    "EC2_EBS_DEFAULT_ENCRYPTION_OFF": 0.004,
+    "IAM_ROOT_ACCESS_KEYS": 0.0388,
+    "IAM_ROOT_NO_MFA": 0.0,
+    "IAM_USER_NO_MFA": 0.0422,
+    "IAM_STALE_ACCESS_KEY": 0.009,
+    "IAM_WEAK_PASSWORD_POLICY": 0.0047,
+    "IAM_WILDCARD_ADMIN_POLICY": 0.0103,
+    "IAM_USER_DIRECT_POLICY": 0.0136,
+    "S3_PUBLIC_ACL": 0.0635,
+    "S3_PUBLIC_POLICY": 0.0445,
+    "S3_NO_DEFAULT_ENCRYPTION": 0.02,
+    "S3_NO_VERSIONING": 0.0209,
+    "S3_SSL_NOT_ENFORCED": 0.0176,
+    "S3_BUCKET_BPA_DISABLED": 0.0201,
+    "S3_ACCOUNT_BPA_DISABLED": 0.0342
+  }
+}

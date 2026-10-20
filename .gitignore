@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+report.json
+report.html
+answer_key.json
+securityhub_state.json*
+results/real_*.json
+results/after_cleanup.*
+results/securityhub_*.json
